@@ -1,0 +1,14 @@
+{
+  "name": "acedatacloud-suno",
+  "version": "1.0.0",
+  "description": "Music generation with prompts or custom lyrics through your Ace Data Cloud account.",
+  "author": "AceDataCloud",
+  "requires_hermes": ">=0.21.6",
+  "provides_tools": [
+    "acedata_suno_generate",
+    "acedata_suno_task"
+  ],
+  "requires_env": [
+    "ACEDATACLOUD_API_KEY"
+  ]
+}
