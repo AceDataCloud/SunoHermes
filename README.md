@@ -1,59 +1,80 @@
-# Ace Data Cloud Suno for Hermes
+# Suno by Ace Data Cloud for Hermes
 
-![Ace Data Cloud](assets/catalog.png)
+[简体中文](readme/README_zh_Hans.md)
 
-Music generation with prompts or custom lyrics through your Ace Data Cloud account.
+A source-only single-service Git installation: **only Suno's two tools** are
+registered. Maintained by Ace Data Cloud; no affiliation with the service maker
+is implied. Requires Hermes **0.23.0+**. This is an alternative to selecting the
+same service in the official **Ace Data Cloud Media** package.
 
-## Install and configure
-
-Requires Hermes **0.21.6 or newer** and an Ace Data Cloud API key with access to this service and sufficient Credits.
-
-Install a reviewed version from this repository using its full 40-character commit SHA:
-
-```sh
-hermes plugins install https://github.com/AceDataCloud/SunoHermes --ref <reviewed-40-character-SHA>
-hermes config set ACEDATACLOUD_API_KEY '<your-api-key>'
-```
-
-Obtain a key and check current service pricing at [Ace Data Cloud](https://platform.acedata.cloud). Enter the key only into your active Hermes profile; never put it into a chat prompt. Enable this plugin's toolset in `hermes tools` and start a new session. When this plugin is available in the official Hermes catalog, you can also install it with `hermes plugins install acedatacloud-suno`.
-
-## Use
-
-Available tools:
-
-- `acedata_suno_generate`
-- `acedata_suno_task`
-
-Example arguments for `acedata_suno_generate`:
-
-```json
-{
-  "prompt": "A short gentle instrumental piano melody.",
-  "instrumental": true,
-  "duration": 10
-}
-```
-
-The supported input schema and defaults are in [spec.json](spec.json). This initial release covers the primary operation described above; other operations in the broader Ace API/Dify integration are not implied. Unsupported arguments are rejected before a network call. No automatic model fallback is used.
-
-Generation submits once with `async: true`. Save the returned `task_id`. Query `acedata_suno_task` with `{"task_id":"...","wait_seconds":60}` until `status` is `succeeded` or `failed`. A pending response is not success; media is exposed only after completion. Query failures retain the same task ID. There is no automatic resubmission, background poller or webhook. A generation timeout can mean the request was accepted: recover its ID from your Ace request history before doing anything that might charge again.
-
-## Privacy, billing and permissions
-
-- Sends only the requested inputs to `/suno/audios` and task queries to `/suno/tasks` at **https://api.acedata.cloud**, authenticated by **ACEDATACLOUD_API_KEY**. Inputs may be processed by the service. Generation/search/analysis uses your paid Ace account; consult current pricing before invoking.
-- Reference URLs are sent to the API for processing. The plugin does not read local media or download returned media; results contain HTTPS links. It never forwards your key to returned media URLs or across origin redirects.
-- Reads the declared key at call time through Hermes scoped secrets. No credential files, sibling plugins, OAuth stores, telemetry, shell commands, background processes, auto-updaters or core overrides.
-- JSON results use an allowlist of public output fields; errors omit raw service payloads. It stores no credentials, prompts or generated output on disk. Hermes itself can store tool messages in session history.
-
-## Validation and development
+## Install this service from Git
 
 ```sh
-python -m unittest discover -s tests -v
-hermes plugins validate . --install-deps
+hermes plugins install https://github.com/AceDataCloud/SunoHermes --ref <40-character-source-SHA> --enable
+hermes config set ACEDATACLOUD_API_KEY '<your-application-api-key>'
+hermes tools enable acedatacloud-single-suno
+hermes tools list
 ```
 
-CI validates this standalone repository on the official Hermes 0.21.6 source with its own locked runtime. Unit tests use synthetic responses and make no paid calls. [Real primary-operation evidence](tests/live-evidence.json) records the isolated stable-runtime call and verified result. Passing CI alone is not proof of a live generation or official listing.
+Use the merged source commit shown in this repository's history, then start a new
+session. No PyPI package or independent official catalog entry is claimed.
+For the reviewed official distribution, search `Suno` in the
+[Hermes catalog](https://hermes-agent.nousresearch.com/docs/plugins) and install
+`acedatacloud-media`. Its [one-product-line rule](https://github.com/NousResearch/hermes-agent/pull/135239#issuecomment-6096145033)
+continues to apply. Do not install a bare service name expecting this adapter.
 
-The bundled transport is shared Ace Data Cloud code copied into this repository so installation needs no sibling checkout or unpublished package. No third-party Python dependencies are added. Asset `assets/logo.png` is the unmodified [official source](https://cdn.acedata.cloud/assets/logo.png), SHA-256 `3e2c6e2d1a61a549dae2374ec4444c77f4c2617c8f3772bdd4cd6e52bf20767e`; `catalog.png` contains that complete logo on a transparent 1200×600 canvas.
+## Application API key and spending
 
-AI-assisted implementation by Ace Data Cloud; reviewed and tested as described in the pull request. MIT licensed.
+1. Open [Ace Data Cloud → Applications](https://platform.acedata.cloud/console/applications?utm_source=opensource&utm_medium=referral&utm_campaign=evergreen&utm_content=sunohermes_readme_api_key); sign in or register.
+2. Initialize **General application** if needed, or use a dedicated application
+   with access to this service. Open **Keys / Manage Keys → Create** and name a
+   separately revocable key for Hermes.
+3. Review expiration, usage limits and Allowed APIs. Copy the raw token without
+   `Bearer ` into the active Hermes profile. A `platform-...` management token
+   cannot replace an application API key. Keep it out of prompts and Git.
+4. Check [current pricing and balance](https://platform.acedata.cloud/models?utm_source=opensource&utm_medium=referral&utm_campaign=evergreen&utm_content=sunohermes_readme_pricing) before any call. Trial allowance
+   is whatever the account currently displays; installing is not free generation.
+
+![Applications API key guide, sourced from existing Ace documentation](https://raw.githubusercontent.com/AceDataCloud/NanoBananaDify/2522b2f57210597af2db866445319334a1677a23/_assets/tutorial/get-api-key-en.png)
+
+**Every generation spends paid Credits without a Hermes approval prompt.** The
+model can select costly model/resolution/count options where supported. Prompts
+and reference URLs are sent to **api.acedata.cloud**. Enabling tools permits their
+use with your key; schema constraints are not a budget. A generation is submitted
+**once, with no automatic retry**. On a timeout or unknown delivery, check request
+history and recover the same task ID; do not generate again. Task lookup does not
+submit a new generation and does not grant generation permission.
+
+## Tools, migration and co-installation
+
+- Generate: `acedatacloud_single_suno_generate`.
+- Query an existing task: `acedatacloud_single_suno_task` with `task_id` and optional
+  `wait_seconds` (0–60). Pending/preview media is not final success.
+- The unmerged candidate's old `acedata_` names are removed, without aliases.
+  Update saved prompts/tool selections; existing task IDs remain usable.
+- Source variants use `acedatacloud_single_` tool names and
+  `acedatacloud-single-` toolsets. They do not overwrite official media tools.
+  If both are installed, enable only one integration for the service to avoid
+  accidental duplicate generation. No profile preferences are changed automatically.
+- This variant registers no native image backend.
+
+## Canonical source and validation boundary
+
+Generated by [https://github.com/AceDataCloud/AceDataCloudMediaHermes](https://github.com/AceDataCloud/AceDataCloudMediaHermes) at `230d90061406b57d50624b6772c3072ba4da9545` using
+`scripts/export_service.py --service suno`. Transport and operation schemas
+have one maintained source; `source-lock.json` records exact file hashes and
+identity transformations. Consumer CI checks regenerated files against that
+immutable checkout. Submit runtime/schema fixes to the canonical repository,
+then deliberately regenerate; do not hand-edit downstream transport copies.
+
+Normal CI runs unittest discovery, the official Hermes 0.23.0 validator, normal
+Git installation with an exact source SHA, and fresh in-process/host profiles
+both alone and alongside official media 2.0.2. Unit requests are mocked; host
+dispatch uses invalid inputs. Green source CI does not prove a new paid task,
+unique billing, current GUI interaction, default installation or catalog admission.
+Original candidate specs and dated live evidence are preserved in `history/`.
+
+![Historical real official catalog search, captured 2026-10-18](https://github.com/AceDataCloud/AceDataCloudMediaHermes/raw/8eaebfb86152d754061375de881548bfa096dd2d/assets/tutorial/hermes-suno-search.jpg)
+
+Historical **2026-10-18** screenshot of the official media **2.0.1** entry;
+it is not this source variant, a new generation result or a current GUI test.

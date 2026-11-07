@@ -1,4 +1,4 @@
-name: Validate Hermes plugin
+name: Validate single-service Hermes source
 on: [push, pull_request, workflow_dispatch]
 permissions:
   contents: read
@@ -7,9 +7,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
-      - name: Unit contracts (no paid requests)
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: AceDataCloud/AceDataCloudMediaHermes
+          ref: 230d90061406b57d50624b6772c3072ba4da9545
+          path: .canonical-source
+      - name: Check generated source against immutable canonical commit
+        run: |
+          mv .canonical-source "$RUNNER_TEMP/canonical-media"
+          python3 "$RUNNER_TEMP/canonical-media/scripts/export_service.py" --service suno --output . --check
+      - name: Unit contracts (mocked network only)
         run: python3 -m unittest discover -s tests -v
-      - uses: NousResearch/hermes-agent/.github/actions/plugin-validate@818c13be1dc4fd28987e1e881a9408224afd4535
+      - uses: NousResearch/hermes-agent/.github/actions/plugin-validate@2bd378ed1b8d6bf2192cb26e0a55ff3091e6bd19
         with:
           path: ${{ github.workspace }}
-          hermes-ref: '818c13be1dc4fd28987e1e881a9408224afd4535'
+          hermes-ref: '2bd378ed1b8d6bf2192cb26e0a55ff3091e6bd19'
+      - name: Normal Git install, minimal tools and co-installation (two isolation modes)
+        env:
+          PLUGIN_SOURCE_REF: ${{ github.event.pull_request.head.sha || github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          hermes_source=("$RUNNER_TEMP"/hermes-plugin-validator.*)
+          export HERMES_SOURCE="${hermes_source[0]}"
+          export PYTHONPATH="$HERMES_SOURCE"
+          "$HERMES_SOURCE/.build/validator/bin/python" -m unittest discover -s tests -v
+          "$HERMES_SOURCE/.build/validator/bin/python" scripts/check_runtime.py
