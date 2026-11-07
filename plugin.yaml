@@ -1,0 +1,14 @@
+{
+  "name": "acedatacloud-suno",
+  "version": "1.0.0",
+  "author": "AceDataCloud",
+  "description": "Suno by Ace Data Cloud: source-only single-service Git plugin. Calls spend paid Credits without a Hermes approval prompt; model options can increase cost. Prompts/reference URLs go to api.acedata.cloud. Never automatically resubmit generation.",
+  "requires_hermes": ">=0.23.0",
+  "provides_tools": [
+    "acedatacloud_single_suno_generate",
+    "acedatacloud_single_suno_task"
+  ],
+  "requires_env": [
+    "ACEDATACLOUD_API_KEY"
+  ]
+}

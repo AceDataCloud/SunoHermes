@@ -1,0 +1,36 @@
+{
+  "canonical_repository": "https://github.com/AceDataCloud/AceDataCloudMediaHermes",
+  "canonical_commit": "230d90061406b57d50624b6772c3072ba4da9545",
+  "generator": "scripts/export_service.py",
+  "service": "suno",
+  "consumer_repository": "https://github.com/AceDataCloud/SunoHermes",
+  "canonical_contract": "services/suno.json",
+  "identity_map": {
+    "tool_prefix": [
+      "acedatacloud_suno",
+      "acedatacloud_single_suno"
+    ],
+    "toolset": [
+      "acedatacloud-suno",
+      "acedatacloud-single-suno"
+    ],
+    "native_image_provider": null
+  },
+  "transport_sha256": "2653fd9275cbda09beff43968d943baa82df83656217d08ddeb9521cc99b1d7f",
+  "canonical_operation_sha256": "c808342c232b3be4ca9cdf748f9214ed13db1296dbbb092c1279fc69bcdb414c",
+  "generated_files": {
+    "__init__.py": "9d51d110361ab2acec5c3561cb500e6545ccce8541b97aa4557b4cea73d13712",
+    "client.py": "2653fd9275cbda09beff43968d943baa82df83656217d08ddeb9521cc99b1d7f",
+    "image_provider.py": "183dc1f72fa1905364466aa30da14d82c074d3484ee6a6a6a5b739a62342490c",
+    "services/suno.json": "23400b7fa357627951d947789aa3e5588e5642e7c3b6bc223581af85f0f3c3c6",
+    "plugin.yaml": "c7c589b3694a40196bb8f1541e5d8f80c995fb6f6e63f3382ec8b1b8ca5a8df0",
+    "tests/test_contracts.py": "fa834427da679d6abb5a4a697f2d8a5ea18fcd9589aef7cb7077c3ebf5ff7dd3",
+    "tests/test_registration.py": "b43832ba1897fac0d0c6e26732c74408e1e74750775195cbe7d2e5cdcf31446b",
+    "tests/test_source_profile.py": "dbe36c636c4d9c6cbc05099305adeb69c36ed5c15c9cc547b610f17bb78b881d",
+    "scripts/check_runtime.py": "be594c81cf4436cc9689babae0344815268aab33345afc391221079be151e90f",
+    "LICENSE": "72d30730d068e067be58878959bac2450f5a05f2b2e3c365cdc13a0181635c3c",
+    ".github/workflows/validate.yml": "7b1cb818c3ab00beb50d3382179495f8d18a2e08f5c1b7b15ef7c5eff5869623",
+    "README.md": "fc4c87bb76bf03305454db2cab2703e51fccad4fe52d64157f7d047f8bfdfd06",
+    "readme/README_zh_Hans.md": "b6e79f085a9b5e5d62e1f87e0aa34a97addd0d00baf071eaf05a1fe3b267c906"
+  }
+}
